@@ -5,16 +5,41 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/random_int_text_view"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="72dp"
-        android:fontFamily="sans-serif-condensed"
-        android:textColor="@android:color/black"
-        android:text="0" />
+        android:layout_weight="1">
+
+
+        <ImageButton
+            android:id="@+id/prev_buttton"
+            android:rotation="180"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_media_play"/>
+
+        <TextView
+            android:id="@+id/random_int_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="72dp"
+            android:fontFamily="sans-serif-condensed"
+            android:textColor="@android:color/black"
+            android:text="0" />
+
+        <ImageButton
+            android:id="@+id/next_button"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_media_play"/>
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:orientation="horizontal"
@@ -25,7 +50,7 @@
             android:id="@+id/notify_button"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fontFamily="sans-serif-condensed"
             android:textSize="18dp"
             android:padding="18dp"
@@ -35,21 +60,12 @@
             android:id="@+id/synchronize_button"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fontFamily="sans-serif-condensed"
             android:textSize="18dp"
             android:padding="18dp"
-            android:text="Show"/>
+            android:text="Synchronize"/>
 
-        <Button
-            android:id="@+id/next_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="18dp"
-            android:padding="18dp"
-            android:text="Next >>"/>
 
     </LinearLayout>
 

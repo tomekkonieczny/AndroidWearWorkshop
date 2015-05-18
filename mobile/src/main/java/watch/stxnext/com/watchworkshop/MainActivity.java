@@ -9,8 +9,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Random;
 
@@ -24,6 +24,8 @@ public class MainActivity extends Activity {
     private static final int COUNTDOWN = 0;
     private static final int STOP = 1;
 
+    private static final int NOTIFICATION_ID = 100;
+
     private TextView valueTextView;
     private boolean countdownLock = false;
 
@@ -34,17 +36,36 @@ public class MainActivity extends Activity {
 
         valueTextView = (TextView) findViewById(R.id.random_int_text_view);
 
-        prepareNextButton();
+        prepareValueButtons();
         prepareNotifyButton();
     }
 
-    private void prepareNextButton() {
-        Button nextButton = (Button) findViewById(R.id.next_button);
+    private void prepareValueButtons() {
+        ImageButton nextButton = (ImageButton) findViewById(R.id.next_button);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Random random = new Random();
-                valueTextView.setText(String.valueOf(random.nextInt(1000)));
+                int value = Integer.valueOf(valueTextView.getText().toString());
+                int newValue = random.nextInt(1000);
+                while (newValue < value) {
+                    newValue = random.nextInt(1000);
+                }
+                value = newValue;
+
+                valueTextView.setText(String.valueOf(value));
+            }
+        });
+
+        ImageButton prevButton = (ImageButton) findViewById(R.id.prev_buttton);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Random random = new Random();
+                int value = Integer.valueOf(valueTextView.getText().toString());
+                value = value > 1 ? random.nextInt(value) : 0;
+
+                valueTextView.setText(String.valueOf(value));
             }
         });
     }
@@ -83,7 +104,7 @@ public class MainActivity extends Activity {
 
                 //Show notification
                 NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(MainActivity.this);
-                mNotificationManager.notify(100, mBuilder.build());
+                mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
             }
         });
@@ -106,16 +127,21 @@ public class MainActivity extends Activity {
 
     private void countdown() {
         int value = Integer.parseInt(valueTextView.getText().toString());
-        if (value > 0 && !countdownLock) {
-            value--;
-            valueTextView.setText(String.valueOf(value));
-            valueTextView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    countdown();
-                }
-            }, 10);
-        } else if (countdownLock) {
+        if (!countdownLock) {
+            if (value > 0) {
+                value--;
+                valueTextView.setText(String.valueOf(value));
+                valueTextView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        countdown();
+                    }
+                }, 10);
+            } else {
+                NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(MainActivity.this);
+                mNotificationManager.cancel(NOTIFICATION_ID);
+            }
+        } else {
             countdownLock = false;
         }
     }
