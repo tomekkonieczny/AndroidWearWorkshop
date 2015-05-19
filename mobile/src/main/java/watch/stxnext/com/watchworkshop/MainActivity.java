@@ -11,13 +11,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.Random;
 
 /**
  * Created by Tomasz Konieczny on 2015-05-05.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private static final String KEY = "key";
 
@@ -26,6 +35,9 @@ public class MainActivity extends Activity {
 
     private static final int NOTIFICATION_ID = 100;
 
+    private static final String PROGRESS_KEY = "watch.stxnext.progress";
+
+    private GoogleApiClient googleApiClient;
     private TextView valueTextView;
     private boolean countdownLock = false;
 
@@ -36,8 +48,57 @@ public class MainActivity extends Activity {
 
         valueTextView = (TextView) findViewById(R.id.random_int_text_view);
 
+        prepareWearableConnection();
         prepareValueButtons();
         prepareNotifyButton();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        googleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        googleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, "Google API Client connection failed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        prepareSynchronizeButton();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Toast.makeText(this, "Google API Client connection suspensed", Toast.LENGTH_SHORT).show();
+    }
+
+    private void prepareSynchronizeButton() {
+        Button button = (Button) findViewById(R.id.synchronize_button);
+        button.setEnabled(true);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                sendProgressToWearable();
+            }
+        });
+    }
+
+    private void prepareWearableConnection() {
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApiIfAvailable(Wearable.API)
+                //.addApi(Wearable.API)
+                .build();
     }
 
     private void prepareValueButtons() {
@@ -45,13 +106,10 @@ public class MainActivity extends Activity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Random random = new Random();
                 int value = Integer.valueOf(valueTextView.getText().toString());
-                int newValue = random.nextInt(1000);
-                while (newValue < value) {
-                    newValue = random.nextInt(1000);
+                if (value <= 95) {
+                    value += 5;
                 }
-                value = newValue;
 
                 valueTextView.setText(String.valueOf(value));
             }
@@ -61,9 +119,8 @@ public class MainActivity extends Activity {
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Random random = new Random();
                 int value = Integer.valueOf(valueTextView.getText().toString());
-                value = value > 1 ? random.nextInt(value) : 0;
+                value = value >= 5 ? value - 5 : 0;
 
                 valueTextView.setText(String.valueOf(value));
             }
@@ -110,6 +167,16 @@ public class MainActivity extends Activity {
         });
     }
 
+    private void sendProgressToWearable() {
+        String value = valueTextView.getText().toString();
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/progress");
+        putDataMapReq.getDataMap().putInt(PROGRESS_KEY, Integer.valueOf(value));
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+
+        Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -135,8 +202,9 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         countdown();
+                        sendProgressToWearable();
                     }
-                }, 10);
+                }, 1000);
             } else {
                 NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(MainActivity.this);
                 mNotificationManager.cancel(NOTIFICATION_ID);
@@ -145,4 +213,5 @@ public class MainActivity extends Activity {
             countdownLock = false;
         }
     }
+
 }

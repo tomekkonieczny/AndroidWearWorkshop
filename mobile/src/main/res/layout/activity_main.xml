@@ -1,72 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-
-        <ImageButton
-            android:id="@+id/prev_buttton"
-            android:rotation="180"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_media_play"/>
-
-        <TextView
-            android:id="@+id/random_int_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="72dp"
-            android:fontFamily="sans-serif-condensed"
-            android:textColor="@android:color/black"
-            android:text="0" />
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/next_button"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_media_play"/>
+
+            <ImageButton
+                android:id="@+id/prev_buttton"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:rotation="180"
+                android:src="@android:drawable/ic_media_play" />
+
+            <TextView
+                android:id="@+id/random_int_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@android:color/black"
+                android:textSize="72dp" />
+
+            <ImageButton
+                android:id="@+id/next_button"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:src="@android:drawable/ic_media_play" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/notify_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-condensed"
+                android:padding="18dp"
+                android:text="Notify"
+                android:textSize="18dp" />
+
+            <Button
+                android:id="@+id/synchronize_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-condensed"
+                android:padding="18dp"
+                android:enabled="false"
+                android:text="Synchronize"
+                android:textSize="18dp" />
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
+</FrameLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/notify_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="18dp"
-            android:padding="18dp"
-            android:text="Notify"/>
-
-        <Button
-            android:id="@+id/synchronize_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="18dp"
-            android:padding="18dp"
-            android:text="Synchronize"/>
-
-
-    </LinearLayout>
-
-</LinearLayout>
