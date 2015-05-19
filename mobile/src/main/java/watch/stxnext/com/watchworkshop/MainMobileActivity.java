@@ -15,18 +15,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.util.Random;
-
 /**
  * Created by Tomasz Konieczny on 2015-05-05.
  */
-public class MainActivity extends Activity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class MainMobileActivity extends Activity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private static final String KEY = "key";
 
@@ -134,7 +130,7 @@ public class MainActivity extends Activity implements GoogleApiClient.OnConnecti
             public void onClick(View v) {
 
                 //Notificaiton builder
-                final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this);
+                final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainMobileActivity.this);
 
                 //Standard notification
                 mBuilder.setSmallIcon(R.mipmap.ic_launcher)
@@ -145,22 +141,22 @@ public class MainActivity extends Activity implements GoogleApiClient.OnConnecti
                         .setAutoCancel(true);
 
                 //Action for handheld and wearable
-                Intent globalIntent = new Intent(MainActivity.this, MainActivity.class);
+                Intent globalIntent = new Intent(MainMobileActivity.this, MainMobileActivity.class);
                 globalIntent.putExtra(KEY, COUNTDOWN);
-                PendingIntent globalPI = PendingIntent.getActivity(MainActivity.this, 0, globalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent globalPI = PendingIntent.getActivity(MainMobileActivity.this, 0, globalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 mBuilder.addAction(R.mipmap.ic_launcher, "Countdown", globalPI);
 
                 //Action only for wearable
                 NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
-                Intent stopIntent = new Intent(MainActivity.this, MainActivity.class);
+                Intent stopIntent = new Intent(MainMobileActivity.this, MainMobileActivity.class);
                 stopIntent.putExtra(KEY, STOP);
-                PendingIntent stopPI = PendingIntent.getActivity(MainActivity.this, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent stopPI = PendingIntent.getActivity(MainMobileActivity.this, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 wearableExtender.addAction(new NotificationCompat.Action(R.mipmap.ic_launcher, "Countdown", globalPI));
                 wearableExtender.addAction(new NotificationCompat.Action(R.mipmap.ic_launcher, "Stop", stopPI));
                 mBuilder.extend(wearableExtender);
 
                 //Show notification
-                NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(MainActivity.this);
+                NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(MainMobileActivity.this);
                 mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
             }
@@ -206,7 +202,7 @@ public class MainActivity extends Activity implements GoogleApiClient.OnConnecti
                     }
                 }, 1000);
             } else {
-                NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(MainActivity.this);
+                NotificationManagerCompat mNotificationManager = NotificationManagerCompat.from(MainMobileActivity.this);
                 mNotificationManager.cancel(NOTIFICATION_ID);
             }
         } else {

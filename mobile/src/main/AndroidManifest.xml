@@ -5,7 +5,7 @@
         android:icon="@mipmap/ic_launcher" android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".MainMobileActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
