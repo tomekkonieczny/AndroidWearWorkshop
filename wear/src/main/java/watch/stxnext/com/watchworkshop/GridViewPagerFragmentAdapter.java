@@ -10,22 +10,22 @@ import android.support.wearable.view.FragmentGridPagerAdapter;
 public class GridViewPagerFragmentAdapter extends FragmentGridPagerAdapter {
 
     private ProgressFragment progressFragment;
-    private OptionsListFragment optionsFragment;
+    private CountdownFragment optionsFragment;
 
     public GridViewPagerFragmentAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
-    public Fragment getFragment(int column, int row) {
+    public Fragment getFragment(int row, int column) {
         Fragment fragment = null;
-        switch (row) {
+        switch (column) {
             case 0:
                 progressFragment = new ProgressFragment();
                 fragment = progressFragment;
                 break;
             case 1:
-                optionsFragment = new OptionsListFragment();
+                optionsFragment = new CountdownFragment();
                 fragment = optionsFragment;
                 break;
         }
@@ -35,10 +35,6 @@ public class GridViewPagerFragmentAdapter extends FragmentGridPagerAdapter {
 
     public ProgressFragment getProgressFragment() {
         return progressFragment;
-    }
-
-    public OptionsListFragment getOptionsFragment() {
-        return optionsFragment;
     }
 
     @Override

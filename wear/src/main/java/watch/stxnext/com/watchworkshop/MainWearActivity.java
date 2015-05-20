@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,17 +13,23 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 public class MainWearActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        DataApi.DataListener {
+        DataApi.DataListener,
+        CountdownFragment.OnCountdownButtonListener {
 
     private static final String PROGRESS_KEY = "watch.stxnext.progress";
+    private static final String COUNTDOWN_KEY = "watch.stxnext.countdown";
 
     private GoogleApiClient googleApiClient;
     private GridViewPagerFragmentAdapter adapter;
+    private GridViewPager pager;
+    private int progress;
 
 
     @Override
@@ -32,7 +37,7 @@ public class MainWearActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GridViewPager pager = (GridViewPager) findViewById(R.id.grid_view_pager);
+        pager = (GridViewPager) findViewById(R.id.grid_view_pager);
         adapter = new GridViewPagerFragmentAdapter(getFragmentManager());
         pager.setAdapter(adapter);
 
@@ -81,11 +86,11 @@ public class MainWearActivity extends Activity implements
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().compareTo("/progress") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    final int progress = dataMap.getInt(PROGRESS_KEY);
+                    progress = dataMap.getInt(PROGRESS_KEY);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            updateProgress(progress);
+                            updateProgress();
                         }
                     });
                 }
@@ -93,10 +98,23 @@ public class MainWearActivity extends Activity implements
         }
     }
 
-    private void updateProgress(int progress) {
+    private void updateProgress() {
         ProgressFragment progressFragment = adapter.getProgressFragment();
         if (progressFragment != null && progressFragment.isAdded()) {
             progressFragment.updateProgress(progress);
         }
+    }
+
+    @Override
+    public void onCountdownActionInvoked(boolean countdownEnabled) {
+        adapter.notifyDataSetChanged();
+        pager.setCurrentItem(0, 0, true);
+        updateProgress();
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/countdown");
+        putDataMapReq.getDataMap().putBoolean(COUNTDOWN_KEY, countdownEnabled);
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+
+        Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
     }
 }

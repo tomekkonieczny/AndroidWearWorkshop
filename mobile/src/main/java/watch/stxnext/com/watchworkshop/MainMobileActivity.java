@@ -15,6 +15,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -22,7 +28,10 @@ import com.google.android.gms.wearable.Wearable;
 /**
  * Created by Tomasz Konieczny on 2015-05-05.
  */
-public class MainMobileActivity extends Activity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class MainMobileActivity extends Activity implements
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks,
+        DataApi.DataListener {
 
     private static final String KEY = "key";
 
@@ -32,6 +41,7 @@ public class MainMobileActivity extends Activity implements GoogleApiClient.OnCo
     private static final int NOTIFICATION_ID = 100;
 
     private static final String PROGRESS_KEY = "watch.stxnext.progress";
+    private static final String COUNTDOWN_KEY = "watch.stxnext.countdown";
 
     private GoogleApiClient googleApiClient;
     private TextView valueTextView;
@@ -58,6 +68,7 @@ public class MainMobileActivity extends Activity implements GoogleApiClient.OnCo
     @Override
     protected void onPause() {
         super.onPause();
+        Wearable.DataApi.removeListener(googleApiClient, this);
         googleApiClient.disconnect();
     }
 
@@ -68,6 +79,7 @@ public class MainMobileActivity extends Activity implements GoogleApiClient.OnCo
 
     @Override
     public void onConnected(Bundle bundle) {
+        Wearable.DataApi.addListener(googleApiClient, this);
         prepareSynchronizeButton();
     }
 
@@ -93,7 +105,7 @@ public class MainMobileActivity extends Activity implements GoogleApiClient.OnCo
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApiIfAvailable(Wearable.API)
-                //.addApi(Wearable.API)
+                        //.addApi(Wearable.API)
                 .build();
     }
 
@@ -210,4 +222,27 @@ public class MainMobileActivity extends Activity implements GoogleApiClient.OnCo
         }
     }
 
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        for (DataEvent event : dataEventBuffer) {
+            if (event.getType() == DataEvent.TYPE_CHANGED) {
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().compareTo("/countdown") == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    final boolean countdownEnabled = dataMap.getBoolean(COUNTDOWN_KEY);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (countdownEnabled) {
+                                valueTextView.removeCallbacks(null);
+                                countdown();
+                            } else {
+                                countdownLock = true;
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
 }
