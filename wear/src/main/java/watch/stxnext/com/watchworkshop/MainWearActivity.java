@@ -2,7 +2,9 @@ package watch.stxnext.com.watchworkshop;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,6 +24,7 @@ public class MainWearActivity extends Activity implements
     private static final String PROGRESS_KEY = "watch.stxnext.progress";
 
     private GoogleApiClient googleApiClient;
+    private GridViewPagerFragmentAdapter adapter;
 
 
     @Override
@@ -30,13 +33,17 @@ public class MainWearActivity extends Activity implements
         setContentView(R.layout.activity_main);
 
         GridViewPager pager = (GridViewPager) findViewById(R.id.grid_view_pager);
-        pager.setAdapter(new GridViewPagerFragmentAdapter(getFragmentManager()));
+        adapter = new GridViewPagerFragmentAdapter(getFragmentManager());
+        pager.setAdapter(adapter);
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Wearable.API)
                 .build();
+
+        DotsPageIndicator indicator = (DotsPageIndicator) findViewById(R.id.indicator);
+        indicator.setPager(pager);
     }
 
     @Override
@@ -74,14 +81,22 @@ public class MainWearActivity extends Activity implements
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().compareTo("/progress") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    int progress = dataMap.getInt(PROGRESS_KEY);
-                    updateProgress();
+                    final int progress = dataMap.getInt(PROGRESS_KEY);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateProgress(progress);
+                        }
+                    });
                 }
             }
         }
     }
 
-    private void updateProgress() {
-
+    private void updateProgress(int progress) {
+        ProgressFragment progressFragment = adapter.getProgressFragment();
+        if (progressFragment != null && progressFragment.isAdded()) {
+            progressFragment.updateProgress(progress);
+        }
     }
 }

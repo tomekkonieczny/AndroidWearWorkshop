@@ -9,9 +9,8 @@ import android.support.wearable.view.FragmentGridPagerAdapter;
  */
 public class GridViewPagerFragmentAdapter extends FragmentGridPagerAdapter {
 
-    private static final String PROGRESS_FRAGMENT_TAG = "progress_fragment";
-
-    private static final String OPTIONS_FRAGMENT_TAG = "options_fragment";
+    private ProgressFragment progressFragment;
+    private OptionsListFragment optionsFragment;
 
     public GridViewPagerFragmentAdapter(FragmentManager fm) {
         super(fm);
@@ -20,21 +19,31 @@ public class GridViewPagerFragmentAdapter extends FragmentGridPagerAdapter {
     @Override
     public Fragment getFragment(int column, int row) {
         Fragment fragment = null;
-        switch (column) {
+        switch (row) {
             case 0:
-                fragment = new ProgressFragment();
+                progressFragment = new ProgressFragment();
+                fragment = progressFragment;
                 break;
             case 1:
-                fragment = new OptionsListFragment();
+                optionsFragment = new OptionsListFragment();
+                fragment = optionsFragment;
                 break;
         }
 
         return fragment;
     }
 
+    public ProgressFragment getProgressFragment() {
+        return progressFragment;
+    }
+
+    public OptionsListFragment getOptionsFragment() {
+        return optionsFragment;
+    }
+
     @Override
     public int getRowCount() {
-        return 0;
+        return 1;
     }
 
     @Override

@@ -15,20 +15,10 @@ import com.github.lzyzsd.circleprogress.DonutProgress;
  */
 public class OptionsListFragment extends Fragment {
 
-    private TextView textView;
-    private DonutProgress progressView;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.progress_layout_stub, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        textView = (TextView) view.findViewById(R.id.text);
-        progressView = (DonutProgress) view.findViewById(R.id.progress_bar);
+        return inflater.inflate(R.layout.options_layout, container, false);
     }
 
 }
