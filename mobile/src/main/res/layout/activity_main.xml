@@ -68,7 +68,6 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-condensed"
                 android:padding="18dp"
-                android:enabled="false"
                 android:text="Synchronize"
                 android:textSize="18dp" />
 

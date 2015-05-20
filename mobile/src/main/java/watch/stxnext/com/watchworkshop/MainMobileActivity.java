@@ -57,6 +57,7 @@ public class MainMobileActivity extends Activity implements
         prepareWearableConnection();
         prepareValueButtons();
         prepareNotifyButton();
+        prepareSynchronizeButton();
     }
 
     @Override
@@ -80,7 +81,6 @@ public class MainMobileActivity extends Activity implements
     @Override
     public void onConnected(Bundle bundle) {
         Wearable.DataApi.addListener(googleApiClient, this);
-        prepareSynchronizeButton();
     }
 
     @Override
@@ -90,7 +90,6 @@ public class MainMobileActivity extends Activity implements
 
     private void prepareSynchronizeButton() {
         Button button = (Button) findViewById(R.id.synchronize_button);
-        button.setEnabled(true);
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
