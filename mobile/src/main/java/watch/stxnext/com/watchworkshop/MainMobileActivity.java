@@ -224,23 +224,21 @@ public class MainMobileActivity extends Activity implements
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
         for (DataEvent event : dataEventBuffer) {
-            if (event.getType() == DataEvent.TYPE_CHANGED) {
-                DataItem item = event.getDataItem();
-                if (item.getUri().getPath().compareTo("/countdown") == 0) {
-                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    final boolean countdownEnabled = dataMap.getBoolean(COUNTDOWN_KEY);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (countdownEnabled) {
-                                valueTextView.removeCallbacks(null);
-                                countdown();
-                            } else {
-                                countdownLock = true;
-                            }
+            DataItem item = event.getDataItem();
+            if (item.getUri().getPath().compareTo("/countdown") == 0) {
+                DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                final boolean countdownEnabled = dataMap.getBoolean(COUNTDOWN_KEY);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (countdownEnabled) {
+                            valueTextView.removeCallbacks(null);
+                            countdown();
+                        } else {
+                            countdownLock = true;
                         }
-                    });
-                }
+                    }
+                });
             }
         }
     }
