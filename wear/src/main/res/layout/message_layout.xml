@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:inset="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="32dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center"
         android:orientation="vertical"
         inset:layout_box="all">
 
-        <Button
-            android:id="@+id/start_button"
+        <SeekBar
+            android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/start" />
+            android:layout_gravity="center"
+            android:max="100"
+            android:progress="0"
+            tools:progress="25" />
+
+        <TextView
+            android:id="@+id/progress_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="25" />
 
         <Button
-            android:id="@+id/stop_button"
+            android:id="@+id/send_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/stop" />
-
+            android:text="@string/send" />
     </LinearLayout>
 
 </android.support.wearable.view.BoxInsetLayout>

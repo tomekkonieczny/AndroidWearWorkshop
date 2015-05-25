@@ -4,4 +4,5 @@
     <string name="hello_square">Hello Square World!</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="send">Send</string>
 </resources>

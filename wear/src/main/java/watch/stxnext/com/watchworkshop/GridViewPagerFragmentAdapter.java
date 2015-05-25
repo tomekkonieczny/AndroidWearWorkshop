@@ -11,6 +11,7 @@ public class GridViewPagerFragmentAdapter extends FragmentGridPagerAdapter {
 
     private ProgressFragment progressFragment;
     private CountdownFragment optionsFragment;
+    private MessageFragment messageFragment;
 
     public GridViewPagerFragmentAdapter(FragmentManager fm) {
         super(fm);
@@ -28,6 +29,9 @@ public class GridViewPagerFragmentAdapter extends FragmentGridPagerAdapter {
                 optionsFragment = new CountdownFragment();
                 fragment = optionsFragment;
                 break;
+            case 2:
+                messageFragment = new MessageFragment();
+                fragment = messageFragment;
         }
 
         return fragment;
@@ -44,6 +48,6 @@ public class GridViewPagerFragmentAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public int getColumnCount(int i) {
-        return 2;
+        return 3;
     }
 }
