@@ -21,6 +21,8 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -31,7 +33,8 @@ import com.google.android.gms.wearable.Wearable;
 public class MainMobileActivity extends Activity implements
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks,
-        DataApi.DataListener {
+        DataApi.DataListener,
+        MessageApi.MessageListener {
 
     private static final String KEY = "key";
 
@@ -42,6 +45,7 @@ public class MainMobileActivity extends Activity implements
 
     private static final String PROGRESS_KEY = "watch.stxnext.progress";
     private static final String COUNTDOWN_KEY = "watch.stxnext.countdown";
+    private static final String MESSAGE_KEY = "watch.stxnext.message";
 
     private GoogleApiClient googleApiClient;
     private TextView valueTextView;
@@ -70,6 +74,7 @@ public class MainMobileActivity extends Activity implements
     protected void onPause() {
         super.onPause();
         Wearable.DataApi.removeListener(googleApiClient, this);
+        Wearable.MessageApi.removeListener(googleApiClient, this);
         googleApiClient.disconnect();
     }
 
@@ -81,6 +86,7 @@ public class MainMobileActivity extends Activity implements
     @Override
     public void onConnected(Bundle bundle) {
         Wearable.DataApi.addListener(googleApiClient, this);
+        Wearable.MessageApi.addListener(googleApiClient, this);
     }
 
     @Override
@@ -241,5 +247,21 @@ public class MainMobileActivity extends Activity implements
                 });
             }
         }
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        if (!messageEvent.getPath().equals("/STX_message")) {
+            return;
+        }
+        byte[] raw = messageEvent.getData();
+        DataMap data = DataMap.fromByteArray(raw);
+        final int value = data.getInt(MESSAGE_KEY);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                valueTextView.setText(String.valueOf(value));
+            }
+        });
     }
 }

@@ -7,12 +7,15 @@ import android.support.wearable.view.GridViewPager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -21,10 +24,12 @@ public class MainWearActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         DataApi.DataListener,
-        CountdownFragment.OnCountdownButtonListener {
+        CountdownFragment.OnCountdownButtonListener,
+        MessageFragment.MessageButtonListener {
 
     private static final String PROGRESS_KEY = "watch.stxnext.progress";
     private static final String COUNTDOWN_KEY = "watch.stxnext.countdown";
+    private static final String MESSAGE_KEY = "watch.stxnext.message";
 
     private GoogleApiClient googleApiClient;
     private GridViewPagerFragmentAdapter adapter;
@@ -116,5 +121,22 @@ public class MainWearActivity extends Activity implements
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
 
         Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
+    }
+
+    @Override
+    public void onSendMessageActionInvoked(final int value) {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
+            Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    DataMap data = new DataMap();
+                    data.putInt(MESSAGE_KEY, value);
+                    byte[] raw = data.toByteArray();
+                    for (Node node : nodes.getNodes()) {
+                        Wearable.MessageApi.sendMessage(googleApiClient, node.getId(), "/STX_message", raw);
+                    }
+                }
+            });
+        }
     }
 }

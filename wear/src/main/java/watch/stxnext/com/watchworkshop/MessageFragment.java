@@ -1,5 +1,6 @@
 package watch.stxnext.com.watchworkshop;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,20 @@ import android.widget.TextView;
  * @author Mieszko on 25-05-2015.
  */
 public class MessageFragment extends Fragment {
+
+    private MessageButtonListener listener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            listener = (MessageButtonListener) getActivity();
+        } catch (ClassCastException ex) {
+            throw new RuntimeException("MessageButtonListener is not implemented in "
+                    + getActivity().getClass().getName());
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -24,7 +39,7 @@ public class MessageFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final TextView progressLabel = (TextView) view.findViewById(R.id.progress_label);
-        SeekBar seekBar = (SeekBar) view.findViewById(R.id.seek_bar);
+        final SeekBar seekBar = (SeekBar) view.findViewById(R.id.seek_bar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -46,8 +61,14 @@ public class MessageFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                if (listener != null) {
+                    listener.onSendMessageActionInvoked(seekBar.getProgress());
+                }
             }
         });
+    }
+
+    public interface MessageButtonListener {
+        void onSendMessageActionInvoked(int value);
     }
 }
