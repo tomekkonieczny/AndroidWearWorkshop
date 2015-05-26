@@ -66,9 +66,19 @@ public class MessageFragment extends Fragment {
                 }
             }
         });
+        Button wakeUpButton = (Button) view.findViewById(R.id.wake_up_button);
+        wakeUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onWakeUpMessageActionInvoked();
+                }
+            }
+        });
     }
 
     public interface MessageButtonListener {
         void onSendMessageActionInvoked(int value);
+        void onWakeUpMessageActionInvoked();
     }
 }

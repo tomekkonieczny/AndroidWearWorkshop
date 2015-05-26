@@ -139,4 +139,18 @@ public class MainWearActivity extends Activity implements
             });
         }
     }
+
+    @Override
+    public void onWakeUpMessageActionInvoked() {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
+            Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    for (Node node : nodes.getNodes()) {
+                        Wearable.MessageApi.sendMessage(googleApiClient, node.getId(), "/STX_wake_up_message", null);
+                    }
+                }
+            });
+        }
+    }
 }
