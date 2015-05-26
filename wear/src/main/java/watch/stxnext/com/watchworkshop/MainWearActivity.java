@@ -125,7 +125,7 @@ public class MainWearActivity extends Activity implements
 
     @Override
     public void onSendMessageActionInvoked(final int value) {
-        if (googleApiClient != null && googleApiClient.isConnected()) {
+        if (googleApiClient.isConnected()) {
             Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                 @Override
                 public void onResult(NodeApi.GetConnectedNodesResult nodes) {
@@ -142,7 +142,7 @@ public class MainWearActivity extends Activity implements
 
     @Override
     public void onWakeUpMessageActionInvoked() {
-        if (googleApiClient != null && googleApiClient.isConnected()) {
+        if (googleApiClient.isConnected()) {
             Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                 @Override
                 public void onResult(NodeApi.GetConnectedNodesResult nodes) {
