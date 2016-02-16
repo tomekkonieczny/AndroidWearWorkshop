@@ -2,6 +2,7 @@ package watch.stxnext.com.watchworkshop;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 
@@ -58,7 +59,7 @@ public class MainWearActivity extends Activity implements
 
     @Override
     protected void onResume() {
-        super.onStart();
+        super.onResume();
         googleApiClient.connect();
     }
 
@@ -86,20 +87,24 @@ public class MainWearActivity extends Activity implements
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        for (DataEvent event : dataEventBuffer) {
-            if (event.getType() == DataEvent.TYPE_CHANGED) {
-                DataItem item = event.getDataItem();
-                if (item.getUri().getPath().compareTo("/progress") == 0) {
-                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    progress = dataMap.getInt(PROGRESS_KEY);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateProgress();
-                        }
-                    });
+        try {
+            for (DataEvent event : dataEventBuffer) {
+                if (event.getType() == DataEvent.TYPE_CHANGED) {
+                    DataItem item = event.getDataItem();
+                    if (item.getUri().getPath().compareTo("/progress") == 0) {
+                        DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                        progress = dataMap.getInt(PROGRESS_KEY);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateProgress();
+                            }
+                        });
+                    }
                 }
             }
+        } finally {
+            dataEventBuffer.release();
         }
     }
 
@@ -128,7 +133,7 @@ public class MainWearActivity extends Activity implements
         if (googleApiClient.isConnected()) {
             Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                 @Override
-                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                public void onResult(@NonNull NodeApi.GetConnectedNodesResult nodes) {
                     DataMap data = new DataMap();
                     data.putInt(MESSAGE_KEY, value);
                     byte[] raw = data.toByteArray();
@@ -145,7 +150,7 @@ public class MainWearActivity extends Activity implements
         if (googleApiClient.isConnected()) {
             Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                 @Override
-                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                public void onResult(@NonNull NodeApi.GetConnectedNodesResult nodes) {
                     for (Node node : nodes.getNodes()) {
                         Wearable.MessageApi.sendMessage(googleApiClient, node.getId(), "/STX_wake_up_message", null);
                     }
